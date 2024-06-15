@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from functools import wraps
 from dateutil.relativedelta import relativedelta
+import json
 
 user_dict = {}
 
@@ -101,6 +102,22 @@ def parameter_type(type_of_notice: str):
     return parameters_decorator
 
 
+def load_data():
+    global user_dict
+    try:
+        with open('user_data.json', 'r') as file:
+            user_dict = json.load(file)
+    except FileNotFoundError:
+        user_dict = {}
+    except json.JSONDecodeError:
+        user_dict = {}
+
+
+def save_data():
+    with open('user_data.json', 'w') as file:
+        json.dump(user_dict, file, default=str)
+
+
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("Hi! This is budget tracker bot , for helping"
                                     "Write /help for more information")
@@ -143,6 +160,7 @@ async def add_spend(update: Update, context: CallbackContext) -> None:
 
     spend = Spends(context.args[0], context.args[1], date)
     user_dict[user_id].append(spend)
+    save_data()
     await update.message.reply_text("Spend was successfully added")
 
 
@@ -235,6 +253,7 @@ async def add_earn(update: Update, context: CallbackContext) -> None:
 
     earn = Earns(context.args[0], context.args[1], date)
     user_dict[user_id].append(earn)
+    save_data()
     await update.message.reply_text("Earn was successfully added")
 
 
@@ -324,6 +343,7 @@ async def del_spend(update: Update, context: CallbackContext):
     if found_notice:
         await update.message.reply_text("Spend notice was successfully deleted")
         list_with_all_notices.remove(found_notice)
+        save_data()
     else:
         await update.message.reply_text("Spend with the specified index was not found.")
 
@@ -363,6 +383,7 @@ async def del_earn(update: Update, context: CallbackContext):
     if found_notice:
         await update.message.reply_text("Earn notice was successfully deleted")
         list_with_all_notices.remove(found_notice)
+        save_data()
     else:
         await update.message.reply_text("Earn with the specified index was not found.")
 
@@ -504,6 +525,7 @@ async def stat_earn(update: Update, context: CallbackContext):
 
 
 def run():
+    load_data()
     app = ApplicationBuilder().token(TOKEN).build()
     logging.info('Bot start working')
 
