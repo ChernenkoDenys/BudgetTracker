@@ -36,10 +36,8 @@ class Spends:
         return f"Spends(amount: {self.amount}, category: {self.category}, date:{self.date})"
 
     def __str__(self):
-        if self.date:
-            return f"{self.position}: Spend amount - {self.amount}, in category - {self.category} with date - {self.date.strftime('%Y-%m-%d')}"
-        else:
-            return f"{self.position}: Spend amount - {self.amount}, in category - {self.category}"
+        return f"{self.position}: Spend amount - {self.amount}, in category - {self.category}" + (
+            f" with date - {self.date.strftime('%Y-%m-%d')}" if self.date else "")
 
 
 class Earns:
@@ -56,10 +54,8 @@ class Earns:
         return f"Spends(amount: {self.amount}, category: {self.category}, date:{self.date})"
 
     def __str__(self):
-        if self.date:
-            return f"{self.position}: Earn amount - {self.amount}, in category - {self.category} with date - {self.date.strftime('%Y-%m-%d')}"
-        else:
-            return f"{self.position}: Earn amount - {self.amount}, in category - {self.category}"
+        return f"{self.position}: Earn amount - {self.amount}, in category - {self.category}" + (
+            f" with date - {self.date.strftime('%Y-%m-%d')}" if self.date else "")
 
 
 def parameter_type(type_of_notice: str):
